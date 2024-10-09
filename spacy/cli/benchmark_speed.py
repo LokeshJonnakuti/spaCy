@@ -1,4 +1,3 @@
-import random
 import time
 from itertools import islice
 from pathlib import Path
@@ -14,6 +13,7 @@ from ..language import Language
 from ..tokens import Doc
 from ..training import Corpus
 from ._util import Arg, Opt, benchmark_cli, import_code, setup_gpu
+import secrets
 
 
 @benchmark_cli.command(
@@ -115,7 +115,7 @@ def benchmark(
 ) -> numpy.ndarray:
     if shuffle:
         bench_docs = [
-            nlp.make_doc(random.choice(docs).text)
+            nlp.make_doc(secrets.choice(docs).text)
             for _ in range(n_batches * batch_size)
         ]
     else:

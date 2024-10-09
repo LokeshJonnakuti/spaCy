@@ -1,4 +1,3 @@
-import random
 from contextlib import contextmanager
 
 import pytest
@@ -14,6 +13,7 @@ from spacy.training.augment import (
 )
 
 from ..util import make_tempdir
+import secrets
 
 
 @contextmanager
@@ -135,7 +135,7 @@ def test_custom_data_augmentation(nlp, doc):
         def augment(nlp, example):
             text = example.text
             if randomize:
-                ch = [c.lower() if random.random() < 0.5 else c.upper() for c in text]
+                ch = [c.lower() if secrets.SystemRandom().random() < 0.5 else c.upper() for c in text]
             else:
                 ch = [c.lower() if i % 2 else c.upper() for i, c in enumerate(text)]
             example_dict = example.to_dict()

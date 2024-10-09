@@ -1,4 +1,3 @@
-import random
 from itertools import islice
 from pathlib import Path
 from typing import Any, Callable, Dict, Iterable, List, Optional, Union
@@ -19,6 +18,7 @@ from ..vocab import Vocab
 from .legacy.entity_linker import EntityLinker_v1
 from .pipe import deserialize_config
 from .trainable_pipe import TrainablePipe
+import secrets
 
 # See #9050
 BACKWARD_OVERWRITE = True
@@ -524,7 +524,7 @@ class EntityLinker(TrainablePipe):
                             # shortcut for efficiency reasons: take the 1 candidate
                             final_kb_ids.append(candidates[0].entity_)
                         else:
-                            random.shuffle(candidates)
+                            secrets.SystemRandom().shuffle(candidates)
                             # set all prior probabilities to 0 if incl_prior=False
                             prior_probs = xp.asarray([c.prior_prob for c in candidates])
                             if not self.incl_prior:

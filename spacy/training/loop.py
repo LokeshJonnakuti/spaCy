@@ -1,4 +1,3 @@
-import random
 import shutil
 import sys
 from pathlib import Path
@@ -23,6 +22,7 @@ from ..errors import Errors
 from ..schemas import ConfigSchemaTraining
 from ..util import logger, registry, resolve_dot_names
 from .example import Example
+import secrets
 
 if TYPE_CHECKING:
     from ..language import Language  # noqa: F401
@@ -333,7 +333,7 @@ def create_train_batches(
             raise ValueError(Errors.E986)
     while max_epochs < 1 or epoch != max_epochs:
         if max_epochs >= 0:
-            random.shuffle(examples)  # type: ignore
+            secrets.SystemRandom().shuffle(examples)  # type: ignore
         else:
             examples = corpus(nlp)
         for batch in batcher(examples):

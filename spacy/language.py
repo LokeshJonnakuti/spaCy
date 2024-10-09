@@ -2,7 +2,6 @@ import functools
 import inspect
 import itertools
 import multiprocessing as mp
-import random
 import traceback
 import warnings
 from contextlib import ExitStack, contextmanager
@@ -68,6 +67,7 @@ from .util import (
 )
 from .vectors import BaseVectors
 from .vocab import Vocab, create_vocab
+import secrets
 
 PipeCallable = Callable[[Doc], Doc]
 
@@ -1255,7 +1255,7 @@ class Language:
                 self._optimizer = self.create_optimizer()
             sgd = self._optimizer
         pipes = list(self.pipeline)
-        random.shuffle(pipes)
+        secrets.SystemRandom().shuffle(pipes)
         if component_cfg is None:
             component_cfg = {}
         grads = {}

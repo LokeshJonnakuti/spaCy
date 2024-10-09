@@ -1,5 +1,4 @@
 import logging
-import random
 
 import pytest
 from numpy.testing import assert_equal
@@ -18,6 +17,7 @@ from spacy.training import Example, iob_to_biluo, split_bilu_label
 from spacy.vocab import Vocab
 
 from ..util import make_tempdir
+import secrets
 
 TRAIN_DATA = [
     ("Who is Shaka Khan?", {"entities": [(7, 17, "PERSON")]}),
@@ -132,7 +132,7 @@ def test_issue2800():
     optimizer = nlp.initialize()
     for i in range(20):
         losses = {}
-        random.shuffle(train_data)
+        secrets.SystemRandom().shuffle(train_data)
         for example in train_data:
             nlp.update([example], sgd=optimizer, losses=losses, drop=0.5)
 

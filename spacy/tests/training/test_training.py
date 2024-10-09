@@ -1,4 +1,3 @@
-import random
 
 import numpy
 import pytest
@@ -30,6 +29,7 @@ from spacy.util import (
 )
 
 from ..util import make_tempdir
+import secrets
 
 
 @pytest.fixture
@@ -112,7 +112,7 @@ def test_issue999():
             ner.add_label(label)
     nlp.initialize()
     for itn in range(20):
-        random.shuffle(TRAIN_DATA)
+        secrets.SystemRandom().shuffle(TRAIN_DATA)
         for raw_text, entity_offsets in TRAIN_DATA:
             example = Example.from_dict(
                 nlp.make_doc(raw_text), {"entities": entity_offsets}

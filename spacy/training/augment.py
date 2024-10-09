@@ -1,11 +1,11 @@
 import itertools
-import random
 from functools import partial
 from typing import TYPE_CHECKING, Callable, Dict, Iterator, List, Optional, Tuple
 
 from ..util import registry
 from .example import Example
 from .iob_utils import _doc_to_biluo_tags_with_partial, split_bilu_label
+import secrets
 
 if TYPE_CHECKING:
     from ..language import Language  # noqa: F401
@@ -56,9 +56,9 @@ def combined_augmenter(
     whitespace_per_token: float = 0.0,
     whitespace_variants: Optional[List[str]] = None,
 ) -> Iterator[Example]:
-    if random.random() < lower_level:
+    if secrets.SystemRandom().random() < lower_level:
         example = make_lowercase_variant(nlp, example)
-    if orth_variants and random.random() < orth_level:
+    if orth_variants and secrets.SystemRandom().random() < orth_level:
         raw_text = example.text
         orig_dict = example.to_dict()
         orig_dict["doc_annotation"]["entities"] = _doc_to_biluo_tags_with_partial(
@@ -73,13 +73,13 @@ def combined_augmenter(
         )
         orig_dict["token_annotation"] = variant_token_annot
         example = example.from_dict(nlp.make_doc(variant_text), orig_dict)
-    if whitespace_variants and random.random() < whitespace_level:
+    if whitespace_variants and secrets.SystemRandom().random() < whitespace_level:
         for _ in range(int(len(example.reference) * whitespace_per_token)):
             example = make_whitespace_variant(
                 nlp,
                 example,
-                random.choice(whitespace_variants),
-                random.randrange(0, len(example.reference)),
+                secrets.choice(whitespace_variants),
+                secrets.SystemRandom().randrange(0, len(example.reference)),
             )
     yield example
 
@@ -122,7 +122,7 @@ def dont_augment(nlp: "Language", example: Example) -> Iterator[Example]:
 def lower_casing_augmenter(
     nlp: "Language", example: Example, *, level: float
 ) -> Iterator[Example]:
-    if random.random() >= level:
+    if secrets.SystemRandom().random() >= level:
         yield example
     else:
         yield make_lowercase_variant(nlp, example)
@@ -146,7 +146,7 @@ def orth_variants_augmenter(
     level: float = 0.0,
     lower: float = 0.0,
 ) -> Iterator[Example]:
-    if random.random() >= level:
+    if secrets.SystemRandom().random() >= level:
         yield example
     else:
         raw_text = example.text
@@ -159,7 +159,7 @@ def orth_variants_augmenter(
             raw_text,
             orig_dict["token_annotation"],
             orth_variants,
-            lower=raw_text is not None and random.random() < lower,
+            lower=raw_text is not None and secrets.SystemRandom().random() < lower,
         )
         orig_dict["token_annotation"] = variant_token_annot
         yield example.from_dict(nlp.make_doc(variant_text), orig_dict)
@@ -187,7 +187,7 @@ def make_orth_variants(
         return raw, token_dict
     # single variants
     ndsv = orth_variants.get("single", [])
-    punct_choices = [random.choice(x["variants"]) for x in ndsv]
+    punct_choices = [secrets.choice(x["variants"]) for x in ndsv]
     for word_idx in range(len(words)):
         for punct_idx in range(len(ndsv)):
             if (
@@ -197,14 +197,14 @@ def make_orth_variants(
                 words[word_idx] = punct_choices[punct_idx]
     # paired variants
     ndpv = orth_variants.get("paired", [])
-    punct_choices = [random.choice(x["variants"]) for x in ndpv]
+    punct_choices = [secrets.choice(x["variants"]) for x in ndpv]
     for word_idx in range(len(words)):
         for punct_idx in range(len(ndpv)):
             if tags[word_idx] in ndpv[punct_idx]["tags"] and words[
                 word_idx
             ] in itertools.chain.from_iterable(ndpv[punct_idx]["variants"]):
                 # backup option: random left vs. right from pair
-                pair_idx = random.choice([0, 1])
+                pair_idx = secrets.choice([0, 1])
                 # best option: rely on paired POS tags like `` / ''
                 if len(ndpv[punct_idx]["tags"]) == 2:
                     pair_idx = ndpv[punct_idx]["tags"].index(tags[word_idx])

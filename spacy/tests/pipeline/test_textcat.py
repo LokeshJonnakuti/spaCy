@@ -1,4 +1,3 @@
-import random
 
 import numpy.random
 import pytest
@@ -31,6 +30,7 @@ from spacy.training.initialize import init_nlp
 # Ensure that the architecture gets added to the registry.
 from ..tok2vec import build_lazy_init_tok2vec as _
 from ..util import make_tempdir
+import secrets
 
 TRAIN_DATA_SINGLE_LABEL = [
     ("I'm so happy.", {"cats": {"POSITIVE": 1.0, "NEGATIVE": 0.0}}),
@@ -327,7 +327,7 @@ def test_simple_train():
 
 @pytest.mark.skip(reason="Test is flakey when run with others")
 def test_textcat_learns_multilabel():
-    random.seed(5)
+    secrets.SystemRandom().seed(5)
     numpy.random.seed(5)
     docs = []
     nlp = Language()
@@ -336,7 +336,7 @@ def test_textcat_learns_multilabel():
         for w2 in letters:
             cats = {letter: float(w2 == letter) for letter in letters}
             docs.append((Doc(nlp.vocab, words=["d"] * 3 + [w1, w2] + ["d"] * 3), cats))
-    random.shuffle(docs)
+    secrets.SystemRandom().shuffle(docs)
     textcat = TextCategorizer(nlp.vocab, width=8)
     for letter in letters:
         textcat.add_label(letter)
@@ -345,7 +345,7 @@ def test_textcat_learns_multilabel():
         losses = {}
         examples = [Example.from_dict(doc, {"cats": cats}) for doc, cat in docs]
         textcat.update(examples, sgd=optimizer, losses=losses)
-        random.shuffle(docs)
+        secrets.SystemRandom().shuffle(docs)
     for w1 in letters:
         for w2 in letters:
             doc = Doc(nlp.vocab, words=["d"] * 3 + [w1, w2] + ["d"] * 3)

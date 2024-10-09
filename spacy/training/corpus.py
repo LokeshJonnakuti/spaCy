@@ -1,4 +1,3 @@
-import random
 import warnings
 from pathlib import Path
 from typing import TYPE_CHECKING, Callable, Iterable, Iterator, List, Optional, Union
@@ -11,6 +10,7 @@ from ..tokens import Doc, DocBin
 from ..vocab import Vocab
 from .augment import dont_augment
 from .example import Example
+import secrets
 
 if TYPE_CHECKING:
     # This lets us add type hints for mypy etc. without causing circular imports
@@ -155,7 +155,7 @@ class Corpus:
         ref_docs = self.read_docbin(nlp.vocab, walk_corpus(self.path, FILE_TYPE))
         if self.shuffle:
             ref_docs = list(ref_docs)  # type: ignore
-            random.shuffle(ref_docs)  # type: ignore
+            secrets.SystemRandom().shuffle(ref_docs)  # type: ignore
 
         if self.gold_preproc:
             examples = self.make_examples_gold_preproc(nlp, ref_docs)

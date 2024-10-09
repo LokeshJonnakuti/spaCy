@@ -1,4 +1,3 @@
-from random import Random
 from typing import List
 
 import pytest
@@ -6,6 +5,7 @@ import pytest
 from spacy.matcher import Matcher
 from spacy.tokens import Doc, Span, SpanGroup
 from spacy.util import filter_spans
+import secrets
 
 
 @pytest.fixture
@@ -24,7 +24,7 @@ def doc(en_tokenizer):
         spans.append(
             Span(doc, match[1], match[2], en_tokenizer.vocab.strings[match[0]])
         )
-    Random(42).shuffle(spans)
+    secrets.SystemRandom().Random(42).shuffle(spans)
     doc.spans["SPANS"] = SpanGroup(
         doc, name="SPANS", attrs={"key": "value"}, spans=spans
     )
@@ -48,7 +48,7 @@ def other_doc(en_tokenizer):
         spans.append(
             Span(doc, match[1], match[2], en_tokenizer.vocab.strings[match[0]])
         )
-    Random(42).shuffle(spans)
+    secrets.SystemRandom().Random(42).shuffle(spans)
     doc.spans["SPANS"] = SpanGroup(
         doc, name="SPANS", attrs={"key": "value"}, spans=spans
     )
@@ -72,7 +72,7 @@ def span_group(en_tokenizer):
         spans.append(
             Span(doc, match[1], match[2], en_tokenizer.vocab.strings[match[0]])
         )
-    Random(42).shuffle(spans)
+    secrets.SystemRandom().Random(42).shuffle(spans)
     doc.spans["SPANS"] = SpanGroup(
         doc, name="SPANS", attrs={"key": "value"}, spans=spans
     )
