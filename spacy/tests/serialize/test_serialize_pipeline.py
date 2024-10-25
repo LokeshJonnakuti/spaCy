@@ -25,6 +25,7 @@ from spacy.tokens import Span
 from spacy.util import ensure_path, load_model
 
 from ..util import make_tempdir
+import fickling
 
 test_parsers = [DependencyParser, EntityRecognizer]
 
@@ -242,7 +243,7 @@ def test_issue4725_1():
             assert ner.cfg["update_with_oracle_cut_size"] == 111
 
         with (tmp_path / "ner.pkl").open("rb") as file_:
-            ner2 = pickle.load(file_)
+            ner2 = fickling.load(file_)
             assert ner2.cfg["update_with_oracle_cut_size"] == 111
 
 
