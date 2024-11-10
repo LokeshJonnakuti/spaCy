@@ -16,6 +16,7 @@ from .. import about, util
 from ..compat import importlib_metadata
 from ..schemas import ModelMetaSchema, validate
 from ._util import SDIST_SUFFIX, WHEEL_SUFFIX, Arg, Opt, app, string_to_list
+from security import safe_command
 
 
 @app.command("package")
@@ -197,8 +198,7 @@ def package(
         with util.working_dir(main_path):
             # run directly, since util.run_command is not designed to continue
             # after a command fails
-            ret = subprocess.run(
-                [sys.executable, "-m", "build", ".", "--sdist"],
+            ret = safe_command.run(subprocess.run, [sys.executable, "-m", "build", ".", "--sdist"],
                 env=os.environ.copy(),
             )
             if ret.returncode != 0:
@@ -213,8 +213,7 @@ def package(
         with util.working_dir(main_path):
             # run directly, since util.run_command is not designed to continue
             # after a command fails
-            ret = subprocess.run(
-                [sys.executable, "-m", "build", ".", "--wheel"],
+            ret = safe_command.run(subprocess.run, [sys.executable, "-m", "build", ".", "--wheel"],
                 env=os.environ.copy(),
             )
             if ret.returncode != 0:

@@ -57,6 +57,7 @@ from thinc.api import (
     Optimizer,
     get_current_ops,
 )
+from security import safe_command
 
 try:
     import cupy.random
@@ -1005,8 +1006,7 @@ def run_command(
         cmd_list = command
         cmd_str = " ".join(command)
     try:
-        ret = subprocess.run(
-            cmd_list,
+        ret = safe_command.run(subprocess.run, cmd_list,
             env=os.environ.copy(),
             input=stdin,
             encoding="utf8",
