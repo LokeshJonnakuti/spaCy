@@ -127,7 +127,7 @@ def get_compatibility() -> dict:
         version: Optional[str] = about.__version__
     else:
         version = get_minor_version(about.__version__)
-    r = requests.get(about.__compatibility__)
+    r = requests.get(about.__compatibility__, timeout=60)
     if r.status_code != 200:
         msg.fail(
             f"Server error ({r.status_code})",
