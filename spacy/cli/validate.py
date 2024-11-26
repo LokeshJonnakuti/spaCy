@@ -76,7 +76,7 @@ def validate() -> None:
 def get_model_pkgs(silent: bool = False) -> Tuple[dict, dict]:
     msg = Printer(no_print=silent, pretty=not silent)
     with msg.loading("Loading compatibility table..."):
-        r = requests.get(about.__compatibility__)
+        r = requests.get(about.__compatibility__, timeout=60)
         if r.status_code != 200:
             msg.fail(
                 f"Server error ({r.status_code})",
